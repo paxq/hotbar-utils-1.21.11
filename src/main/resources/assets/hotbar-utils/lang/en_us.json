@@ -1,0 +1,16 @@
+{
+  "key.hotbar_utils.slot_41": "Back Slot 1",
+  "key.hotbar_utils.slot_42": "Back Slot 2",
+  "key.hotbar_utils.slot_43": "Back Slot 3",
+  "key.hotbar_utils.settings": "Open Settings",
+  "key.category.hotbar_utils.main": "Hotbar Utils",
+
+  "config.hotbar_utils.category.general": "General",
+  "config.hotbar_utils.category.keybind": "Keybinds",
+  "config.hotbar_utils.category.advanced": "Advanced",
+  "config.hotbar_utils.enabled": "Enabled",
+  "config.hotbar_utils.back_slot_description": "TEST",
+  "config.hotbar_utils.slot_41.tooltip": "Inventory Slot ID to use as Back Slot 1",
+  "config.hotbar_utils.slot_42.tooltip": "Inventory Slot ID to use as Back Slot 2",
+  "config.hotbar_utils.slot_43.tooltip": "Inventory Slot ID to use as Back Slot 3"
+}
