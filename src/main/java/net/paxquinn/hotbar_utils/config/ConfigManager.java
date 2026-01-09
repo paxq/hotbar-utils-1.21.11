@@ -28,7 +28,7 @@ public class ConfigManager {
 //            HotbarUtilsConfig.hudEnabled = loaded.hudEnabled;
 //            HotbarUtilsConfig.hudSpacing = loaded.hudSpacing;
 //            HotbarUtilsConfig.hudOffset = loaded.hudOffset;
-//            HotbarUtilsConfig.backSlots = loaded.backSlots;
+//            HotbarUtilsConfig.backSlotIDs = loaded.backSlotIDs;
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -2,14 +2,21 @@ package net.paxquinn.hotbar_utils.event;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.annotation.Debug;
 import net.paxquinn.hotbar_utils.HotbarUtilsClient;
 import net.paxquinn.hotbar_utils.config.ConfigManager;
 import net.paxquinn.hotbar_utils.config.HotbarUtilsConfig;
 import net.paxquinn.hotbar_utils.config.HotbarUtilsConfigScreen;
+import net.paxquinn.hotbar_utils.config.SlotType;
 import org.lwjgl.glfw.GLFW;
 
 public class KeyInputHandler {
@@ -29,24 +36,21 @@ public class KeyInputHandler {
             assert client.player != null;
 
             if (keySettings.wasPressed()) {
-                client.player.sendMessage(Text.literal("Opening Hotbar Utils Settings..."), true);
                 client.setScreen(HotbarUtilsConfigScreen.create(client.currentScreen));
             }
-
             if (!HotbarUtilsConfig.enabled) return;
 
             if (keyBackSlot1.wasPressed()) {
-                HotbarUtilsClient.pullItemToSlot(client, HotbarUtilsConfig.backSlot1);
+                pullItemToSlot(client, HotbarUtilsConfig.backSlot1, HotbarUtilsConfig.backSlot1Type);
             }
             if (keyBackSlot2.wasPressed()) {
-                HotbarUtilsClient.pullItemToSlot(client, HotbarUtilsConfig.backSlot2);
+                pullItemToSlot(client, HotbarUtilsConfig.backSlot2, HotbarUtilsConfig.backSlot2Type);
             }
             if (keyBackSlot3.wasPressed()) {
-                HotbarUtilsClient.pullItemToSlot(client, HotbarUtilsConfig.backSlot3);
+                pullItemToSlot(client, HotbarUtilsConfig.backSlot3, HotbarUtilsConfig.backSlot3Type);
             }
         });
     }
-
     public static void register() {
         keySettings = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 KEY_SETTINGS,
@@ -74,5 +78,37 @@ public class KeyInputHandler {
         ));
 
         registerKeyInputs();
+    }
+
+    private static void pullItemToSlot(MinecraftClient client, int slot, SlotType type) {
+        if (client.player == null || client.interactionManager == null) return;
+
+        PlayerInventory inv = client.player.getInventory();
+        int selectedHotbarSlot = inv.getSelectedSlot();
+        if (type == SlotType.INVENTORY) {
+            client.interactionManager.clickSlot(
+                    client.player.currentScreenHandler.syncId,
+                    slot,
+                    selectedHotbarSlot,
+                    SlotActionType.SWAP,
+                    client.player
+            );
+        }
+
+        ItemStack heldStack = client.player.getMainHandStack();
+        EquipmentSlot heldPreferredEquipmentSlot = client.player.getPreferredEquipmentSlot(heldStack);
+        if (type == SlotType.HELMET && (heldPreferredEquipmentSlot == EquipmentSlot.HEAD || heldStack.isEmpty())) {
+            client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId, 5, selectedHotbarSlot, SlotActionType.SWAP, client.player);
+        }
+        if (type == SlotType.CHESTPLATE && (heldPreferredEquipmentSlot == EquipmentSlot.BODY || heldStack.isEmpty())) {
+            client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId, 6, selectedHotbarSlot, SlotActionType.SWAP, client.player);
+        }
+        if (type == SlotType.LEGGINGS && (heldPreferredEquipmentSlot == EquipmentSlot.LEGS || heldStack.isEmpty())) {
+            client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId, 7, selectedHotbarSlot, SlotActionType.SWAP, client.player);
+        }
+        if (type == SlotType.BOOTS && (heldPreferredEquipmentSlot == EquipmentSlot.FEET || heldStack.isEmpty())) {
+            client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId, 8, selectedHotbarSlot, SlotActionType.SWAP, client.player);
+        }
+        inv.markDirty();
     }
 }

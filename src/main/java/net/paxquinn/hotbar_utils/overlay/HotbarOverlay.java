@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 
 import net.minecraft.util.Arm;
@@ -11,6 +12,7 @@ import net.minecraft.util.Identifier;
 import net.paxquinn.hotbar_utils.config.HotbarUtilsConfig;
 import net.paxquinn.hotbar_utils.config.HudAnchor;
 import net.paxquinn.hotbar_utils.config.HudAnchorType;
+import net.paxquinn.hotbar_utils.config.SlotType;
 
 import java.util.List;
 
@@ -44,9 +46,15 @@ public class HotbarOverlay {
                 renderConnectedSlot(context, slotX, slotY);
             }
         }
-        for (int i = 0; i < HotbarUtilsConfig.backSlots.toArray().length; i++) {
-            List<Integer> slotList = HotbarUtilsConfig.backSlots;
-            ItemStack stack = client.player.getInventory().getStack(slotList.get(i));
+        for (int i = 0; i < HotbarUtilsConfig.backSlotIDs.toArray().length; i++) {
+            List<Integer> slotIDList = HotbarUtilsConfig.backSlotIDs;
+            List<SlotType> slotTypeList = HotbarUtilsConfig.backSlotTypes;
+            ItemStack stack = client.player.getInventory().getStack(slotIDList.get(i));
+
+            if (slotTypeList.get(i) == SlotType.HELMET) stack = client.player.getEquippedStack(EquipmentSlot.HEAD);
+            if (slotTypeList.get(i) == SlotType.CHESTPLATE) stack = client.player.getEquippedStack(EquipmentSlot.BODY);
+            if (slotTypeList.get(i) == SlotType.LEGGINGS) stack = client.player.getEquippedStack(EquipmentSlot.LEGS);
+            if (slotTypeList.get(i) == SlotType.BOOTS) stack = client.player.getEquippedStack(EquipmentSlot.FEET);
 
             if (HotbarUtilsConfig.hudAnchor == HudAnchor.RIGHT) {
                 slotX = hotbarLeft + ((slotIndex + i) * slotWidth) + totalOffset + (HotbarUtilsConfig.hudSpacing * i);
