@@ -22,7 +22,7 @@
 			"net.paxquinn.hotbar_utils.HotbarUtilsClient"
 		],
 		"modmenu": [
-			"net.paxquinn.hotbar_utils.compat.HotbarUtilsModMenu"
+			"net.paxquinn.hotbar_utils.HotbarUtilsModMenu"
 		]
 	},
 	"mixins": [

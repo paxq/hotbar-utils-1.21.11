@@ -1,4 +1,4 @@
-package net.paxquinn.hotbar_utils.compat;
+package net.paxquinn.hotbar_utils;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;

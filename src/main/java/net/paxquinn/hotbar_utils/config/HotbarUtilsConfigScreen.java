@@ -22,23 +22,28 @@ public class HotbarUtilsConfigScreen {
         general.addEntry( entryBuilder.startBooleanToggle( Text.translatable("config.hotbar_utils.enabled"), HotbarUtilsConfig.enabled )
                 .setSaveConsumer(value -> HotbarUtilsConfig.enabled = value)
                 .build());
-        general.addEntry( entryBuilder
-                .startTextDescription(Text.translatable("config.hotbar_utils.back_slot_description"))
+        general.addEntry( entryBuilder.startBooleanToggle( Text.translatable("config.hotbar_utils.hud_enabled"), HotbarUtilsConfig.hudEnabled )
+                .setSaveConsumer(value -> HotbarUtilsConfig.hudEnabled = value)
                 .build());
-        general.addEntry( entryBuilder.
-                startIntField(Text.translatable("key.hotbar_utils.slot_41"), HotbarUtilsConfig.backSlot1)
-                .setTooltip(Text.translatable("config.hotbar_utils.slot_41.tooltip"))
-                .setSaveConsumer(value -> HotbarUtilsConfig.backSlot1 = value)
+        general.addEntry( entryBuilder.startBooleanToggle( Text.translatable("config.hotbar_utils.offhand_texture"), HotbarUtilsConfig.hudOffhandTexture )
+                .setSaveConsumer(value -> HotbarUtilsConfig.hudOffhandTexture = value)
+                .setTooltip(Text.translatable("config.hotbar_utils.offhand_texture.tooltip"))
                 .build());
-        general.addEntry( entryBuilder
-                .startIntField(Text.translatable("key.hotbar_utils.slot_42"), HotbarUtilsConfig.backSlot2)
-                .setTooltip(Text.translatable("config.hotbar_utils.slot_42.tooltip"))
-                .setSaveConsumer(value -> HotbarUtilsConfig.backSlot2 = value)
+        general.addEntry( entryBuilder.startIntSlider( Text.translatable("config.hotbar_utils.hud_offset"), HotbarUtilsConfig.hudOffset, 0, 64 )
+                .setSaveConsumer(value -> HotbarUtilsConfig.hudOffset = value)
                 .build());
-        general.addEntry( entryBuilder
-                .startIntField(Text.translatable("key.hotbar_utils.slot_43"), HotbarUtilsConfig.backSlot3)
-                .setTooltip(Text.translatable("config.hotbar_utils.slot_43.tooltip"))
-                .setSaveConsumer(value -> HotbarUtilsConfig.backSlot3 = value)
+        general.addEntry( entryBuilder.startIntSlider( Text.translatable("config.hotbar_utils.hud_spacing"), HotbarUtilsConfig.hudSpacing, 0, 12 )
+                .setSaveConsumer(value -> HotbarUtilsConfig.hudSpacing = value)
+                .build());
+        general.addEntry( entryBuilder.startEnumSelector( Text.translatable("config.hotbar_utils.hud_anchor"), HudAnchor.class, HotbarUtilsConfig.hudAnchor )
+                .setDefaultValue(HudAnchor.RIGHT)
+                .setSaveConsumer(value -> HotbarUtilsConfig.hudAnchor = value)
+                .setTooltip(Text.translatable("config.hotbar_utils.hud_anchor.tooltip"))
+                .build());
+        general.addEntry( entryBuilder.startEnumSelector( Text.translatable("config.hotbar_utils.hud_anchor_type"), HudAnchorType.class, HotbarUtilsConfig.hudAnchorType )
+                .setDefaultValue(HudAnchorType.STATIC)
+                .setSaveConsumer(value -> HotbarUtilsConfig.hudAnchorType = value)
+                .setTooltip(Text.translatable("config.hotbar_utils.hud_anchor_type.tooltip"))
                 .build());
 
         // KEYBINDS
@@ -58,6 +63,27 @@ public class HotbarUtilsConfigScreen {
         keybinds.addEntry( entryBuilder
                 .startKeyCodeField(Text.translatable("key.hotbar_utils.slot_43"), KeyInputHandler.keyBackSlot3.getDefaultKey())
                 .setKeySaveConsumer(key -> { KeyInputHandler.keyBackSlot3.setBoundKey(key); KeyInputHandler.keyBackSlot3.setPressed(false); })
+                .build());
+
+        // ADVANCED
+        ConfigCategory advanced = builder.getOrCreateCategory(Text.translatable("config.hotbar_utils.category.advanced"));
+        advanced.addEntry( entryBuilder
+                .startTextDescription(Text.translatable("config.hotbar_utils.back_slot_description"))
+                .build());
+        advanced.addEntry( entryBuilder.
+                startIntField(Text.translatable("key.hotbar_utils.slot_41"), HotbarUtilsConfig.backSlot1)
+                .setTooltip(Text.translatable("config.hotbar_utils.slot_41.tooltip"))
+                .setSaveConsumer(value -> HotbarUtilsConfig.backSlot1 = value)
+                .build());
+        advanced.addEntry( entryBuilder
+                .startIntField(Text.translatable("key.hotbar_utils.slot_42"), HotbarUtilsConfig.backSlot2)
+                .setTooltip(Text.translatable("config.hotbar_utils.slot_42.tooltip"))
+                .setSaveConsumer(value -> HotbarUtilsConfig.backSlot2 = value)
+                .build());
+        advanced.addEntry( entryBuilder
+                .startIntField(Text.translatable("key.hotbar_utils.slot_43"), HotbarUtilsConfig.backSlot3)
+                .setTooltip(Text.translatable("config.hotbar_utils.slot_43.tooltip"))
+                .setSaveConsumer(value -> HotbarUtilsConfig.backSlot3 = value)
                 .build());
 
         return builder.build();

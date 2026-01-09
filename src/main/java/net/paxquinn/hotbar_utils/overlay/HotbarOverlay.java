@@ -4,73 +4,84 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.item.ItemStack;
 
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
+import net.minecraft.util.Arm;
 import net.minecraft.util.Identifier;
 import net.paxquinn.hotbar_utils.config.HotbarUtilsConfig;
+import net.paxquinn.hotbar_utils.config.HudAnchor;
+import net.paxquinn.hotbar_utils.config.HudAnchorType;
+
+import java.util.List;
 
 public class HotbarOverlay {
     private static final MinecraftClient client = MinecraftClient.getInstance();
+    private static final Identifier WIDGET_HOTBAR = Identifier.ofVanilla("textures/gui/sprites/hud/hotbar.png");
+    private static final Identifier WIDGET_OFFHAND = Identifier.ofVanilla("textures/gui/sprites/hud/hotbar_offhand_right.png");
 
     public static void render(DrawContext context, RenderTickCounter tickCounter) {
         if (client.player == null) return;
+        if (!HotbarUtilsConfig.hudEnabled || !HotbarUtilsConfig.enabled || client.options.hudHidden) return;
 
-// FOR THE FUTURE
-//        private static ItemStack findMatchingItem(MinecraftClient client) {
-//    for (ItemStack stack : client.player.getInventory().main) {
-//        if (isValid(stack)) {
-//            return stack.copy();
-//        }
-//    }
-//    return ItemStack.EMPTY;
-//}
-
-        ItemStack stack = new ItemStack(Items.GRASS_BLOCK);
-        if (stack.isEmpty()) return;
-
+        boolean isLeftHanded = client.options.getMainArm().getValue() == Arm.LEFT;
+        boolean anchorAndClientHandMatch = (isLeftHanded && HotbarUtilsConfig.hudAnchor == HudAnchor.LEFT) || (!isLeftHanded && HotbarUtilsConfig.hudAnchor == HudAnchor.RIGHT);
         int screenWidth = context.getScaledWindowWidth();
         int screenHeight = context.getScaledWindowHeight();
+        int hotbarLeft = screenWidth / 2 - 90;
+        int hotbarY = screenHeight - 22;
+        int offhandOffset = !client.player.getOffHandStack().isEmpty() || HotbarUtilsConfig.hudAnchorType == HudAnchorType.STATIC ? 28 : 0;
+        int totalOffset = anchorAndClientHandMatch ? HotbarUtilsConfig.hudOffset : HotbarUtilsConfig.hudOffset + offhandOffset;
+        int slotWidth = 20;
+        int slotIndex = 9;
+        int slotX = hotbarLeft + (slotIndex * slotWidth) + totalOffset;
+        int slotY = hotbarY;
 
-        int hotbarWidth = 182; // 9 slots * 20 pixels
-        int baseX = screenWidth / 2 - hotbarWidth / 2; // left-most slot
-        int baseY = screenHeight - 22;
+        if (HotbarUtilsConfig.hudSpacing <= 0) {
+            if (HotbarUtilsConfig.hudAnchor == HudAnchor.RIGHT) {
+                renderConnectedSlot(context, slotX, slotY);
+            } else {
+                slotX = hotbarLeft - (3 * slotWidth) - totalOffset - 2;
+                renderConnectedSlot(context, slotX, slotY);
+            }
+        }
+        for (int i = 0; i < HotbarUtilsConfig.backSlots.toArray().length; i++) {
+            List<Integer> slotList = HotbarUtilsConfig.backSlots;
+            ItemStack stack = client.player.getInventory().getStack(slotList.get(i));
 
-        int slotIndex = 9; // the “10th” slot (0-indexed)
-        int slotSpacing = 20; // spacing between vanilla slots
+            if (HotbarUtilsConfig.hudAnchor == HudAnchor.RIGHT) {
+                slotX = hotbarLeft + ((slotIndex + i) * slotWidth) + totalOffset + (HotbarUtilsConfig.hudSpacing * i);
+            } else {
+                slotX = hotbarLeft - ((1 + i)* slotWidth) - totalOffset - (HotbarUtilsConfig.hudSpacing * i) - 2;
+            }
 
-        int slotX = baseX + slotIndex * slotSpacing;
-        int slotY = baseY;
+            if (HotbarUtilsConfig.hudSpacing > 0) renderIndividualSlot(context, slotX, slotY, HotbarUtilsConfig.hudOffhandTexture);
 
-        renderSlot(context, slotX - 4, slotY - 4);
-        renderItem(context, stack, slotX, slotY);
+            if (stack.isEmpty()) continue; // Skip item rendering if empty
+            renderItem(context, stack, slotX + 3, slotY + 3);
+        }
     }
 
-    private static final Identifier WIDGETS =
-            Identifier.of("minecraft", "textures/gui/widgets.png");
-
-    private static void renderSlot(DrawContext context, int x, int y) {
-        context.drawTexture(
-                RenderPipelines.GUI,  // pipeline
-                WIDGETS,              // texture
-                x, y,                 // screen position
-                0f, 0f,           // UV coords of hotbar slot
-                24, 24,        // size
-                256, 256, // texture atlas size
-                0xFFFFFFFF            // color (white, full alpha)
-        );
+    private static void renderIndividualSlot(DrawContext context, int x, int y, boolean offhand_texture) {
+        if (offhand_texture) {
+            // Offhand Style
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_OFFHAND, x, y, 7, 1, 22, 22, 29, 24);
+            return;
+        }
+        // Hotbar Style
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR, x, y, 0, 0, 20, 22, 182, 22);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR, x + 1, y, 161, 0, 21, 22, 182, 22);
+    }
+    private static void renderConnectedSlot(DrawContext context, int x, int y) {
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR, x, y, 0, 0, 60, 22, 182, 22);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR, x + 1, y, 121, 0, 61, 22, 182, 22);
     }
 
     private static void renderItem(DrawContext context, ItemStack stack, int x, int y) {
+        String countText = "";
+        int count = stack.getCount();
+        if (count > 1) countText = String.valueOf(count);
+
         context.drawItem(stack, x, y);
-        context.drawStackOverlay(
-                client.textRenderer,
-                stack,
-                x,
-                y,
-                "∞"
-        );
+        context.drawStackOverlay(client.textRenderer, stack, x, y, countText);
     }
 }

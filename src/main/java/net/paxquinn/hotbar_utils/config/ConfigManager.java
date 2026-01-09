@@ -21,10 +21,14 @@ public class ConfigManager {
         }
         try (FileReader reader = new FileReader(FILE)) {
             HotbarUtilsConfig loaded = GSON.fromJson(reader, HotbarUtilsConfig.class);
-            HotbarUtilsConfig.enabled = loaded.enabled;
-            HotbarUtilsConfig.backSlot1 = loaded.backSlot1;
-            HotbarUtilsConfig.backSlot2 = loaded.backSlot2;
-            HotbarUtilsConfig.backSlot3 = loaded.backSlot3;
+//            HotbarUtilsConfig.enabled = loaded.enabled;
+//            HotbarUtilsConfig.backSlot1 = loaded.backSlot1;
+//            HotbarUtilsConfig.backSlot2 = loaded.backSlot2;
+//            HotbarUtilsConfig.backSlot3 = loaded.backSlot3;
+//            HotbarUtilsConfig.hudEnabled = loaded.hudEnabled;
+//            HotbarUtilsConfig.hudSpacing = loaded.hudSpacing;
+//            HotbarUtilsConfig.hudOffset = loaded.hudOffset;
+//            HotbarUtilsConfig.backSlots = loaded.backSlots;
         } catch (Exception e) {
             e.printStackTrace();
         }
