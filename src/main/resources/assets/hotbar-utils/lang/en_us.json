@@ -1,4 +1,5 @@
 {
+  "key.category.hotbar_utils.main": "Hotbar Utils",
   "key.hotbar_utils.slot_41": "Back Slot 1",
   "key.hotbar_utils.slot_42": "Back Slot 2",
   "key.hotbar_utils.slot_43": "Back Slot 3",
@@ -6,7 +7,7 @@
   "key.hotbar_utils.restock": "Restock",
   "key.hotbar_utils.restock.tooltip": "Restocks the selected slot from the inventory.",
 
-  "config.hotbar_utils.title": "Hotbar Utils",
+  "config.hotbar_utils.title": "Hotbar Utils Settings",
   "config.hotbar_utils.enabled": "Enabled",
   "config.hotbar_utils.category.general": "General",
   "config.hotbar_utils.category.keybind": "Keybinds",
@@ -22,6 +23,8 @@
   "config.hotbar_utils.slot.type.tooltip": "Controls whether Hotbar Utils grabs from inventory or equipment.",
 
   "config.hotbar_utils.hud_enabled": "HUD Enabled",
+  "config.hotbar_utils.render_unbound": "Render Unbound",
+  "config.hotbar_utils.render_unbound.tooltip": "True: Renders backslots even when the corrosponding hotkeys are unbound.",
   "config.hotbar_utils.offhand_texture": "Use Offhand Texture",
   "config.hotbar_utils.offhand_texture.tooltip": "Displays back slots with the offhand frame texture.",
   "config.hotbar_utils.hud_offset": "Offset",

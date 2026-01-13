@@ -64,51 +64,6 @@ public class HotbarUtilsConfigScreen {
                 .setSaveConsumer(value -> config.backSlot3.type = value)
                 .build());
 
-
-        //////////////////
-        //   KEYBINDS   //
-        //////////////////
-//        ConfigCategory keybinds = builder.getOrCreateCategory(Text.translatable("config.hotbar_utils.category.keybind"));
-//        keybinds.addEntry( entryBuilder
-//                .startKeyCodeField(Text.translatable("key.hotbar_utils.settings"), KeyInputHandler.keySettings.getDefaultKey())
-//                .setDefaultValue(KeyInputHandler.keySettings.getDefaultKey())
-//                .setKeySaveConsumer(key -> {
-//                    KeyInputHandler.keySettings.setBoundKey(key);
-//                    KeyInputHandler.keySettings.setPressed(false);
-//                })
-//                .build());
-//        keybinds.addEntry( entryBuilder
-//                .startKeyCodeField(Text.translatable("key.hotbar_utils.slot_41"), KeyInputHandler.keyBackSlot1.getDefaultKey())
-//                .setDefaultValue(KeyInputHandler.keyBackSlot1.getDefaultKey())
-//                .setKeySaveConsumer(key -> {
-//                    KeyInputHandler.keyBackSlot1.setBoundKey(key);
-//                    KeyInputHandler.keyBackSlot1.setPressed(false);
-//                    config.backSlot1.key = key;
-//                    config.updateLists();
-//                })
-//                .build());
-//        keybinds.addEntry( entryBuilder
-//                .startKeyCodeField(Text.translatable("key.hotbar_utils.slot_42"), KeyInputHandler.keyBackSlot2.getDefaultKey())
-//                .setDefaultValue(KeyInputHandler.keyBackSlot2.getDefaultKey())
-//                .setKeySaveConsumer(key -> {
-//                    KeyInputHandler.keyBackSlot2.setBoundKey(key);
-//                    KeyInputHandler.keyBackSlot2.setPressed(false);
-//                    config.backSlot2.key = key;
-//                    config.updateLists();
-//                })
-//                .build());
-//        keybinds.addEntry( entryBuilder
-//                .startKeyCodeField(Text.translatable("key.hotbar_utils.slot_43"), KeyInputHandler.keyBackSlot3.getDefaultKey())
-//                .setDefaultValue(KeyInputHandler.keyBackSlot3.getDefaultKey())
-//                .setKeySaveConsumer(key -> {
-//                    KeyInputHandler.keyBackSlot3.setBoundKey(key);
-//                    KeyInputHandler.keyBackSlot3.setPressed(false);
-//                    config.backSlot3.key = key;
-//                    config.updateLists();
-//                })
-//                .build());
-
-
         //////////////////
         //      HUD     //
         //////////////////
@@ -118,6 +73,7 @@ public class HotbarUtilsConfigScreen {
                 .build());
         hud.addEntry( entryBuilder.startBooleanToggle( Text.translatable("config.hotbar_utils.render_unbound"), config.renderUnbound )
                 .setSaveConsumer(value -> config.renderUnbound = value)
+                .setTooltip(Text.translatable("config.hotbar_utils.render_unbound.tooltip"))
                 .build());
         hud.addEntry( entryBuilder.startBooleanToggle( Text.translatable("config.hotbar_utils.offhand_texture"), config.hudOffhandTexture )
                 .setSaveConsumer(value -> config.hudOffhandTexture = value)
