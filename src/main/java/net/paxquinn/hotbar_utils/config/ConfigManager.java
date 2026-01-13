@@ -20,23 +20,17 @@ public class ConfigManager {
             return;
         }
         try (FileReader reader = new FileReader(FILE)) {
-            HotbarUtilsConfig loaded = GSON.fromJson(reader, HotbarUtilsConfig.class);
-//            HotbarUtilsConfig.enabled = loaded.enabled;
-//            HotbarUtilsConfig.backSlot1 = loaded.backSlot1;
-//            HotbarUtilsConfig.backSlot2 = loaded.backSlot2;
-//            HotbarUtilsConfig.backSlot3 = loaded.backSlot3;
-//            HotbarUtilsConfig.hudEnabled = loaded.hudEnabled;
-//            HotbarUtilsConfig.hudSpacing = loaded.hudSpacing;
-//            HotbarUtilsConfig.hudOffset = loaded.hudOffset;
-//            HotbarUtilsConfig.backSlotIDs = loaded.backSlotIDs;
+            config = GSON.fromJson(reader, HotbarUtilsConfig.class);
+            if (config == null) config = new HotbarUtilsConfig();
         } catch (Exception e) {
             e.printStackTrace();
+            config = new HotbarUtilsConfig();
         }
     }
 
     public static void save() {
         try (FileWriter writer = new FileWriter(FILE)) {
-            GSON.toJson(new HotbarUtilsConfig(), writer);
+            GSON.toJson(config, writer);
         } catch (Exception e) {
             e.printStackTrace();
         }

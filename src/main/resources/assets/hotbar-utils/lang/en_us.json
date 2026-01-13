@@ -18,7 +18,7 @@
   "config.hotbar_utils.subcategory.slot_43": "Back Slot 3 Options",
   "config.hotbar_utils.slot.id": "├─ Inventory Slot",
   "config.hotbar_utils.slot.type": "├─ Slot Type",
-  "config.hotbar_utils.slot.id.tooltip": "Inventory Slot ID's range from 0-35",
+  "config.hotbar_utils.slot.id.tooltip": "Inventory Slot ID's range from 9-35",
   "config.hotbar_utils.slot.type.tooltip": "Controls whether Hotbar Utils grabs from inventory or equipment.",
 
   "config.hotbar_utils.hud_enabled": "HUD Enabled",

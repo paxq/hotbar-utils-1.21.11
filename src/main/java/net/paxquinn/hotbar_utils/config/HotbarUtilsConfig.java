@@ -4,21 +4,28 @@ import java.util.Arrays;
 import java.util.List;
 
 public class HotbarUtilsConfig {
-    public static boolean enabled = true;
-    public static int backSlot1 = 9;
-    public static int backSlot2 = 10;
-    public static int backSlot3 = 11;
-    public static SlotType backSlot1Type = SlotType.INVENTORY;
-    public static SlotType backSlot2Type = SlotType.INVENTORY;
-    public static SlotType backSlot3Type = SlotType.INVENTORY;
-    public static List<Integer> backSlotIDs = Arrays.asList(backSlot1, backSlot2, backSlot3);
-    public static List<SlotType> backSlotTypes = Arrays.asList(backSlot1Type, backSlot2Type, backSlot3Type);
+    public boolean enabled = true;
+    public int backSlot1 = 0;
+    public int backSlot2 = 0;
+    public int backSlot3 = 0;
+    public SlotType backSlot1Type = SlotType.INVENTORY;
+    public SlotType backSlot2Type = SlotType.INVENTORY;
+    public SlotType backSlot3Type = SlotType.INVENTORY;
+    public List<Integer> backSlotIDs = Arrays.asList(backSlot1, backSlot2, backSlot3);
+    public List<SlotType> backSlotTypes = Arrays.asList(backSlot1Type, backSlot2Type, backSlot3Type);
 
-    public static boolean hudEnabled = true;
-    public static boolean hudOffhandTexture = false;
-    public static int hudOffset = 8; //GUI Pixels
-    public static int hudSpacing = 0;
-    public static HudAnchor hudAnchor = HudAnchor.RIGHT;
-    public static HudAnchorType hudAnchorType = HudAnchorType.STATIC;
+    public boolean hudEnabled = true;
+    public boolean hudOffhandTexture = false;
+    public boolean renderUnbound = true;
+    public int hudOffset = 8; //GUI Pixels
+    public int hudSpacing = 0;
+    public HudAnchor hudAnchor = HudAnchor.RIGHT;
+    public HudAnchorType hudAnchorType = HudAnchorType.STATIC;
 
+    public void updateIDs() {
+        backSlotIDs = Arrays.asList(backSlot1, backSlot2, backSlot3);
+    }
+    public void updateTypes() {
+        backSlotTypes = Arrays.asList(backSlot1Type, backSlot2Type, backSlot3Type);
+    }
 }

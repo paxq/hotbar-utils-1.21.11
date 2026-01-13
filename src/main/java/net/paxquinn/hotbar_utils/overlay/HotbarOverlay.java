@@ -9,11 +9,7 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraft.util.Arm;
 import net.minecraft.util.Identifier;
-import net.paxquinn.hotbar_utils.config.HotbarUtilsConfig;
-import net.paxquinn.hotbar_utils.config.HudAnchor;
-import net.paxquinn.hotbar_utils.config.HudAnchorType;
-import net.paxquinn.hotbar_utils.config.SlotType;
-
+import net.paxquinn.hotbar_utils.config.*;
 import java.util.List;
 
 public class HotbarOverlay {
@@ -23,48 +19,58 @@ public class HotbarOverlay {
 
     public static void render(DrawContext context, RenderTickCounter tickCounter) {
         if (client.player == null) return;
-        if (!HotbarUtilsConfig.hudEnabled || !HotbarUtilsConfig.enabled || client.options.hudHidden) return;
+
+        HotbarUtilsConfig config = ConfigManager.get();
+
+        if (!config.hudEnabled || !config.enabled || client.options.hudHidden) return;
 
         boolean isLeftHanded = client.options.getMainArm().getValue() == Arm.LEFT;
-        boolean anchorAndClientHandMatch = (isLeftHanded && HotbarUtilsConfig.hudAnchor == HudAnchor.LEFT) || (!isLeftHanded && HotbarUtilsConfig.hudAnchor == HudAnchor.RIGHT);
+        boolean anchorAndClientHandMatch = (isLeftHanded && config.hudAnchor == HudAnchor.LEFT) || (!isLeftHanded && config.hudAnchor == HudAnchor.RIGHT);
         int screenWidth = context.getScaledWindowWidth();
         int screenHeight = context.getScaledWindowHeight();
         int hotbarLeft = screenWidth / 2 - 90;
         int hotbarY = screenHeight - 22;
-        int offhandOffset = !client.player.getOffHandStack().isEmpty() || HotbarUtilsConfig.hudAnchorType == HudAnchorType.STATIC ? 28 : 0;
-        int totalOffset = anchorAndClientHandMatch ? HotbarUtilsConfig.hudOffset : HotbarUtilsConfig.hudOffset + offhandOffset;
+        int offhandOffset = !client.player.getOffHandStack().isEmpty() || config.hudAnchorType == HudAnchorType.STATIC ? 28 : 0;
+        int totalOffset = anchorAndClientHandMatch ? config.hudOffset : config.hudOffset + offhandOffset;
         int slotWidth = 20;
         int slotIndex = 9;
         int slotX = hotbarLeft + (slotIndex * slotWidth) + totalOffset;
         int slotY = hotbarY;
+        int skippedSlots = 0;
 
-        if (HotbarUtilsConfig.hudSpacing <= 0) {
-            if (HotbarUtilsConfig.hudAnchor == HudAnchor.RIGHT) {
+        if (config.hudSpacing <= 0) {
+            if (config.hudAnchor == HudAnchor.RIGHT) {
                 renderConnectedSlot(context, slotX, slotY);
             } else {
                 slotX = hotbarLeft - (3 * slotWidth) - totalOffset - 2;
                 renderConnectedSlot(context, slotX, slotY);
             }
         }
-        for (int i = 0; i < HotbarUtilsConfig.backSlotIDs.toArray().length; i++) {
-            List<Integer> slotIDList = HotbarUtilsConfig.backSlotIDs;
-            List<SlotType> slotTypeList = HotbarUtilsConfig.backSlotTypes;
+        for (int i = 0; i < config.backSlotIDs.toArray().length; i++) {
+            List<Integer> slotIDList = config.backSlotIDs;
+            List<SlotType> slotTypeList = config.backSlotTypes;
             ItemStack stack = client.player.getInventory().getStack(slotIDList.get(i));
+
+//            // Skip rendering if empty
+//            if (config.hudAnchorType == HudAnchorType.DYNAMIC && (stack.isEmpty() || !config.renderUnbound)) {
+//                skippedSlots++;
+//                continue;
+//            }
 
             if (slotTypeList.get(i) == SlotType.HELMET) stack = client.player.getEquippedStack(EquipmentSlot.HEAD);
             if (slotTypeList.get(i) == SlotType.CHESTPLATE) stack = client.player.getEquippedStack(EquipmentSlot.BODY);
             if (slotTypeList.get(i) == SlotType.LEGGINGS) stack = client.player.getEquippedStack(EquipmentSlot.LEGS);
             if (slotTypeList.get(i) == SlotType.BOOTS) stack = client.player.getEquippedStack(EquipmentSlot.FEET);
 
-            if (HotbarUtilsConfig.hudAnchor == HudAnchor.RIGHT) {
-                slotX = hotbarLeft + ((slotIndex + i) * slotWidth) + totalOffset + (HotbarUtilsConfig.hudSpacing * i);
+            if (config.hudAnchor == HudAnchor.RIGHT) {
+                slotX = hotbarLeft + ((slotIndex + i - skippedSlots) * slotWidth) + totalOffset + (config.hudSpacing * i);
             } else {
-                slotX = hotbarLeft - ((1 + i)* slotWidth) - totalOffset - (HotbarUtilsConfig.hudSpacing * i) - 2;
+                slotX = hotbarLeft - ((1 + i - skippedSlots) * slotWidth) - totalOffset - (config.hudSpacing * i) - 2;
             }
 
-            if (HotbarUtilsConfig.hudSpacing > 0) renderIndividualSlot(context, slotX, slotY, HotbarUtilsConfig.hudOffhandTexture);
+            if (config.hudSpacing > 0) renderIndividualSlot(context, slotX, slotY, config.hudOffhandTexture);
 
-            if (stack.isEmpty()) continue; // Skip item rendering if empty
+            if (stack.isEmpty() || !config.renderUnbound) continue; // Skip item rendering if empty or key is unbound
             renderItem(context, stack, slotX + 3, slotY + 3);
         }
     }
@@ -92,4 +98,8 @@ public class HotbarOverlay {
         context.drawItem(stack, x, y);
         context.drawStackOverlay(client.textRenderer, stack, x, y, countText);
     }
+
+//    private static void renderSlotIdentifier(DrawContext context, int slotX, int slotY, int id) {
+//
+//    }
 }
