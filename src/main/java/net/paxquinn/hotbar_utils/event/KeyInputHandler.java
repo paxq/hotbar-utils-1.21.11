@@ -9,7 +9,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.paxquinn.hotbar_utils.config.ConfigManager;
 import net.paxquinn.hotbar_utils.config.HotbarUtilsConfig;
@@ -40,13 +39,13 @@ public class KeyInputHandler {
             if (!config.enabled) return;
 
             if (keyBackSlot1.wasPressed()) {
-                pullItemToSlot(client, config.backSlot1, config.backSlot1Type);
+                pullItemToSlot(client, config.backSlot1.id, config.backSlot1.type);
             }
             if (keyBackSlot2.wasPressed()) {
-                pullItemToSlot(client, config.backSlot2, config.backSlot2Type);
+                pullItemToSlot(client, config.backSlot2.id, config.backSlot2.type);
             }
             if (keyBackSlot3.wasPressed()) {
-                pullItemToSlot(client, config.backSlot3, config.backSlot3Type);
+                pullItemToSlot(client, config.backSlot3.id, config.backSlot3.type);
             }
         });
     }

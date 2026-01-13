@@ -1,18 +1,13 @@
 package net.paxquinn.hotbar_utils.config;
 
-import java.util.Arrays;
-import java.util.List;
+import net.paxquinn.hotbar_utils.event.KeyInputHandler;
+import net.paxquinn.hotbar_utils.mixin.KeyBindingAccessor;
 
 public class HotbarUtilsConfig {
     public boolean enabled = true;
-    public int backSlot1 = 0;
-    public int backSlot2 = 0;
-    public int backSlot3 = 0;
-    public SlotType backSlot1Type = SlotType.INVENTORY;
-    public SlotType backSlot2Type = SlotType.INVENTORY;
-    public SlotType backSlot3Type = SlotType.INVENTORY;
-    public List<Integer> backSlotIDs = Arrays.asList(backSlot1, backSlot2, backSlot3);
-    public List<SlotType> backSlotTypes = Arrays.asList(backSlot1Type, backSlot2Type, backSlot3Type);
+    public BackSlot backSlot1 = new BackSlot(((KeyBindingAccessor) KeyInputHandler.keyBackSlot1).hotbarutils$getBoundKey(), 0, SlotType.INVENTORY, null);
+    public BackSlot backSlot2 = new BackSlot(((KeyBindingAccessor) KeyInputHandler.keyBackSlot2).hotbarutils$getBoundKey(), 0, SlotType.INVENTORY, null);
+    public BackSlot backSlot3 = new BackSlot(((KeyBindingAccessor) KeyInputHandler.keyBackSlot3).hotbarutils$getBoundKey(), 0, SlotType.INVENTORY, null);
 
     public boolean hudEnabled = true;
     public boolean hudOffhandTexture = false;
@@ -22,10 +17,9 @@ public class HotbarUtilsConfig {
     public HudAnchor hudAnchor = HudAnchor.RIGHT;
     public HudAnchorType hudAnchorType = HudAnchorType.STATIC;
 
-    public void updateIDs() {
-        backSlotIDs = Arrays.asList(backSlot1, backSlot2, backSlot3);
-    }
-    public void updateTypes() {
-        backSlotTypes = Arrays.asList(backSlot1Type, backSlot2Type, backSlot3Type);
+    public void updateKeybinds() {
+        backSlot1.key = ((KeyBindingAccessor) KeyInputHandler.keyBackSlot1).hotbarutils$getBoundKey();
+        backSlot2.key = ((KeyBindingAccessor) KeyInputHandler.keyBackSlot2).hotbarutils$getBoundKey();
+        backSlot3.key = ((KeyBindingAccessor) KeyInputHandler.keyBackSlot3).hotbarutils$getBoundKey();
     }
 }

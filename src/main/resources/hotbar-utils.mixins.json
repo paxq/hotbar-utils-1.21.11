@@ -3,7 +3,7 @@
 	"package": "net.paxquinn.hotbar_utils.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
+		"KeyBindingAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
