@@ -17,6 +17,10 @@ public class HotbarUtilsConfig {
     public HudAnchor hudAnchor = HudAnchor.RIGHT;
     public HudAnchorType hudAnchorType = HudAnchorType.STATIC;
 
+    public String preferredChestplateType = "";
+    public String preferredChestplateName = "";
+    public String preferredElytraName = "";
+
     public void updateKeybinds() {
         backSlot1.key = ((KeyBindingAccessor) KeyInputHandler.keyBackSlot1).hotbarutils$getBoundKey();
         backSlot2.key = ((KeyBindingAccessor) KeyInputHandler.keyBackSlot2).hotbarutils$getBoundKey();
