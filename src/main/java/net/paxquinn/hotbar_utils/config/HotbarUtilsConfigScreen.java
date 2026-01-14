@@ -29,6 +29,11 @@ public class HotbarUtilsConfigScreen {
         // Back Slot 1 Sub-Category
         SubCategoryBuilder backSlot1 = entryBuilder.startSubCategory(Text.translatable("config.hotbar_utils.subcategory.slot_41"));
         backSlot1.add( entryBuilder.
+                startIntSlider(Text.translatable("config.hotbar_utils.slot.overlay"), config.backSlot1.overlay, 0, 12)
+                .setTooltip(Text.translatable("config.hotbar_utils.slot.overlay.tooltip"))
+                .setSaveConsumer(value -> config.backSlot1.overlay = value)
+                .build());
+        backSlot1.add( entryBuilder.
                 startIntField(Text.translatable("config.hotbar_utils.slot.id"), config.backSlot1.id)
                 .setTooltip(Text.translatable("config.hotbar_utils.slot.id.tooltip"))
                 .setSaveConsumer(value -> config.backSlot1.id = value)
@@ -42,6 +47,11 @@ public class HotbarUtilsConfigScreen {
         // Back Slot 2 Sub-Category
         SubCategoryBuilder backSlot2 = entryBuilder.startSubCategory(Text.translatable("config.hotbar_utils.subcategory.slot_42"));
         backSlot2.add( entryBuilder.
+                startIntSlider(Text.translatable("config.hotbar_utils.slot.overlay"), config.backSlot2.overlay, 0, 12)
+                .setTooltip(Text.translatable("config.hotbar_utils.slot.overlay.tooltip"))
+                .setSaveConsumer(value -> config.backSlot2.overlay = value)
+                .build());
+        backSlot2.add( entryBuilder.
                 startIntField(Text.translatable("config.hotbar_utils.slot.id"), config.backSlot2.id)
                 .setTooltip(Text.translatable("config.hotbar_utils.slot.id.tooltip"))
                 .setSaveConsumer(value -> config.backSlot2.id = value)
@@ -54,6 +64,11 @@ public class HotbarUtilsConfigScreen {
         general.addEntry(backSlot2.build());
         // Back Slot 3 Sub-Category
         SubCategoryBuilder backSlot3 = entryBuilder.startSubCategory(Text.translatable("config.hotbar_utils.subcategory.slot_43"));
+        backSlot3.add( entryBuilder.
+                startIntSlider(Text.translatable("config.hotbar_utils.slot.overlay"), config.backSlot3.overlay, 0, 12)
+                .setTooltip(Text.translatable("config.hotbar_utils.slot.overlay.tooltip"))
+                .setSaveConsumer(value -> config.backSlot3.overlay = value)
+                .build());
         backSlot3.add( entryBuilder.
                 startIntField(Text.translatable("config.hotbar_utils.slot.id"), config.backSlot3.id)
                 .setTooltip(Text.translatable("config.hotbar_utils.slot.id.tooltip"))

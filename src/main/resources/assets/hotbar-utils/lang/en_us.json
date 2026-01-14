@@ -21,6 +21,8 @@
   "config.hotbar_utils.slot.id.tooltip": "Inventory Slot ID's range from 9-35",
   "config.hotbar_utils.slot.type": "Slot Type",
   "config.hotbar_utils.slot.type.tooltip": "Controls whether Hotbar Utils grabs from inventory or equipment.",
+  "config.hotbar_utils.slot.overlay": "Slot Overlay",
+  "config.hotbar_utils.slot.overlay.tooltip": "Displays a number overlay on top of the slot HUD. Set to 0 to disable.",
 
   "config.hotbar_utils.subcategory.hud": "HUD Options",
   "config.hotbar_utils.hud_enabled": "HUD Enabled",

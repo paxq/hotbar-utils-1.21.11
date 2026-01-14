@@ -16,8 +16,9 @@ import java.util.List;
 
 public class HotbarOverlay {
     private static final MinecraftClient client = MinecraftClient.getInstance();
-    private static final Identifier WIDGET_HOTBAR = Identifier.ofVanilla("textures/gui/sprites/hud/hotbar.png");
-    private static final Identifier WIDGET_OFFHAND = Identifier.ofVanilla("textures/gui/sprites/hud/hotbar_offhand_right.png");
+    private static final Identifier WIDGET_HOTBAR_VANILLA = Identifier.ofVanilla("textures/gui/sprites/hud/hotbar.png");
+    private static final Identifier WIDGET_OFFHAND_VANILLA = Identifier.ofVanilla("textures/gui/sprites/hud/hotbar_offhand_right.png");
+    private static final Identifier WIDGET_HOTBAR_NUMBER = Identifier.of("hotbar-utils", "textures/gui/hotbar.png");
 
     public static void render(DrawContext context, RenderTickCounter tickCounter) {
         if (client.player == null) return;
@@ -55,7 +56,7 @@ public class HotbarOverlay {
                 continue;
             }
 
-            // Item Rendering
+            // Determine slot/item position
             int addedIndex = i - skippedSlots;
             if (config.hudAnchor == HudAnchor.RIGHT) {
                 slotX = hotbarLeft + ((slotIndex + addedIndex) * slotWidth) + totalOffset + (config.hudSpacing * addedIndex);
@@ -63,6 +64,7 @@ public class HotbarOverlay {
                 slotX = hotbarLeft - ((1 + addedIndex) * slotWidth) - totalOffset - (config.hudSpacing * addedIndex) - 2;
             }
 
+            // Render Slot(s)
             if (config.hudSpacing > 0 || skippedSlots > 0) {
                 renderIndividualSlot(context, slotX, slotY, config.hudOffhandTexture);
             } else if (i == 0) {
@@ -70,8 +72,12 @@ public class HotbarOverlay {
                 if (config.hudAnchor == HudAnchor.LEFT) slotX = hotbarLeft - (3 * slotWidth) - totalOffset - 2;
                 renderConnectedSlot(context, slotX, slotY);
             }
+            // Render Overlay
+            if (slotList.get(i).overlay > 0) renderOverlay(context, slotX, slotY, slotList.get(i).overlay - 1, slotWidth);
 
             if (stack.isEmpty() || (!config.renderUnbound && slotList.get(i).key.getCode() == -1)) continue; // Skip item rendering if empty or key is unbound
+
+            // Render Item
             renderItem(context, stack, slotX + 3, slotY + 3);
         }
     }
@@ -79,16 +85,16 @@ public class HotbarOverlay {
     private static void renderIndividualSlot(DrawContext context, int x, int y, boolean offhand_texture) {
         if (offhand_texture) {
             // Offhand Style
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_OFFHAND, x, y, 7, 1, 22, 22, 29, 24);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_OFFHAND_VANILLA, x, y, 7, 1, 22, 22, 29, 24);
             return;
         }
         // Hotbar Style
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR, x, y, 0, 0, 20, 22, 182, 22);
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR, x + 1, y, 161, 0, 21, 22, 182, 22);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR_VANILLA, x, y, 0, 0, 20, 22, 182, 22);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR_VANILLA, x + 1, y, 161, 0, 21, 22, 182, 22);
     }
     private static void renderConnectedSlot(DrawContext context, int x, int y) {
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR, x, y, 0, 0, 60, 22, 182, 22);
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR, x + 1, y, 121, 0, 61, 22, 182, 22);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR_VANILLA, x, y, 0, 0, 60, 22, 182, 22);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR_VANILLA, x + 1, y, 121, 0, 61, 22, 182, 22);
     }
 
     private static void renderItem(DrawContext context, ItemStack stack, int x, int y) {
@@ -100,7 +106,7 @@ public class HotbarOverlay {
         context.drawStackOverlay(client.textRenderer, stack, x, y, countText);
     }
 
-    private static void renderSlotIdentifier(DrawContext context, int slotX, int slotY, int id) {
-
+    private static void renderOverlay(DrawContext context, int x, int y, int index, int width) {
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGET_HOTBAR_NUMBER, x, y, index * width, 0, width, 22, 242, 22);
     }
 }
