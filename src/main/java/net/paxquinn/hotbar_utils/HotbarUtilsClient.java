@@ -10,7 +10,7 @@ public class HotbarUtilsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         KeyInputHandler.register();
-        ConfigManager.load();
+        ConfigManager.init();
         HudRenderCallback.EVENT.register(HotbarOverlay::render);
     }
 }

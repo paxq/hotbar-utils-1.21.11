@@ -12,10 +12,16 @@ public class ConfigManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File FILE =
             FabricLoader.getInstance().getConfigDir().resolve("hotbar_utils.json").toFile();
-    private static HotbarUtilsConfig config = new HotbarUtilsConfig();
+    private static HotbarUtilsConfig config;
+
+    public static void init() {
+        load();
+    }
 
     public static void load() {
         if (!FILE.exists()) {
+            config = new HotbarUtilsConfig();
+            validateConfig(config);
             save();
             return;
         }
@@ -26,6 +32,9 @@ public class ConfigManager {
             e.printStackTrace();
             config = new HotbarUtilsConfig();
         }
+
+        validateConfig(config);
+        config.updateKeybinds();
     }
 
     public static void save() {
@@ -38,5 +47,10 @@ public class ConfigManager {
 
     public static HotbarUtilsConfig get() {
         return config;
+    }
+
+    private static void validateConfig(HotbarUtilsConfig config) {
+        if (config.hudAnchor == null) config.hudAnchor = HudAnchor.RIGHT;
+        if (config.hudAnchorType == null) config.hudAnchorType = HudAnchorType.STATIC;
     }
 }
