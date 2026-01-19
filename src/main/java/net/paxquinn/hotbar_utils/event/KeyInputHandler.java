@@ -8,13 +8,18 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Identifier;
+import net.paxquinn.hotbar_utils.HotbarMemory;
 import net.paxquinn.hotbar_utils.config.ConfigManager;
 import net.paxquinn.hotbar_utils.config.HotbarUtilsConfig;
 import net.paxquinn.hotbar_utils.config.HotbarUtilsConfigScreen;
 import net.paxquinn.hotbar_utils.config.SlotType;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class KeyInputHandler {
     public static final KeyBinding.Category HOTBAR_UTILS_CATEGORY = KeyBinding.Category.create(Identifier.of("hotbar_utils", "main"));
@@ -22,15 +27,25 @@ public class KeyInputHandler {
     public static final String KEY_BACK_SLOT_1 = "key.hotbar_utils.slot_41";
     public static final String KEY_BACK_SLOT_2 = "key.hotbar_utils.slot_42";
     public static final String KEY_BACK_SLOT_3 = "key.hotbar_utils.slot_43";
+    public static final String KEY_RESTOCK = "key.hotbar_utils.restock";
+    public static final String KEY_ELYTRA = "key.hotbar_utils.quick_elytra";
 
     public static KeyBinding keySettings;
     public static KeyBinding keyBackSlot1;
     public static KeyBinding keyBackSlot2;
     public static KeyBinding keyBackSlot3;
+    public static KeyBinding keyRestock;
+    public static KeyBinding keyElytra;
+
+
+    private static final Queue<Integer> RESTOCK_QUEUE = new ArrayDeque<>();
+    private static ItemStack restockTarget = ItemStack.EMPTY;
+    private static int restockHotbarSlot = -1;
+    private static boolean RESTOCK_ACTIVE = false;
 
     public static void registerKeyInputs() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            assert client.player != null;
+            if (client.player == null) return;
             HotbarUtilsConfig config = ConfigManager.get();
 
             if (keySettings.wasPressed()) {
@@ -47,6 +62,42 @@ public class KeyInputHandler {
             if (keyBackSlot3.wasPressed()) {
                 pullItemToSlot(client, config.backSlot3.id, config.backSlot3.type);
             }
+            if (keyRestock.wasPressed()) {
+                restockViaClient(client);
+            }
+
+
+            if (RESTOCK_ACTIVE) {
+                if (client.interactionManager == null) {
+                    RESTOCK_ACTIVE = false;
+                    RESTOCK_QUEUE.clear();
+                    return;
+                }
+
+                PlayerInventory inv = client.player.getInventory();
+                ScreenHandler handler = client.player.currentScreenHandler;
+
+                ItemStack held = inv.getStack(restockHotbarSlot);
+                if (!held.isEmpty() && held.getCount() >= restockTarget.getMaxCount()) {
+                    RESTOCK_ACTIVE = false;
+                    RESTOCK_QUEUE.clear();
+                    return;
+                }
+
+                Integer slot = RESTOCK_QUEUE.poll();
+                if (slot == null) {
+                    RESTOCK_ACTIVE = false;
+                    return;
+                }
+
+                if (restockTarget.getMaxCount() <= 1) {
+                    client.interactionManager.clickSlot(handler.syncId, slot, restockHotbarSlot, SlotActionType.SWAP, client.player);
+                } else {
+                    client.interactionManager.clickSlot(handler.syncId, slot, 0, SlotActionType.PICKUP, client.player);
+                    client.interactionManager.clickSlot(handler.syncId, restockHotbarSlot, 0, SlotActionType.PICKUP, client.player);
+                    if (!handler.getCursorStack().isEmpty()) client.interactionManager.clickSlot(handler.syncId, slot, 0, SlotActionType.PICKUP, client.player);
+                }
+            }
         });
     }
     public static void register() {
@@ -59,23 +110,81 @@ public class KeyInputHandler {
         keyBackSlot1 = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             KEY_BACK_SLOT_1,
             InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_7,
+            GLFW.GLFW_KEY_Y,
             HOTBAR_UTILS_CATEGORY
         ));
         keyBackSlot2 = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 KEY_BACK_SLOT_2,
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_8,
+                GLFW.GLFW_KEY_U,
                 HOTBAR_UTILS_CATEGORY
         ));
         keyBackSlot3 = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 KEY_BACK_SLOT_3,
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_9,
+                GLFW.GLFW_KEY_I,
+                HOTBAR_UTILS_CATEGORY
+        ));
+        keyRestock = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                KEY_RESTOCK,
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_O,
+                HOTBAR_UTILS_CATEGORY
+        ));
+        keyElytra = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                KEY_ELYTRA,
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_P,
                 HOTBAR_UTILS_CATEGORY
         ));
 
         registerKeyInputs();
+    }
+
+    private static void restockViaClient(MinecraftClient client) {
+        if (client.player == null || client.interactionManager == null) return;
+
+        PlayerInventory inv = client.player.getInventory();
+        int selectedSlot = inv.getSelectedSlot();
+
+        ItemStack held = inv.getStack(selectedSlot);
+        ItemStack target = held.isEmpty() ? HotbarMemory.recall(selectedSlot) : held;
+
+        if (target == null || target.isEmpty()) return;
+        if (!held.isEmpty()) HotbarMemory.remember(selectedSlot, target);
+
+        ScreenHandler handler = client.player.currentScreenHandler;
+
+        RESTOCK_QUEUE.clear();
+        restockTarget = target.copy();
+        restockHotbarSlot = selectedSlot;
+        RESTOCK_ACTIVE = true;
+
+        for (int slot = 9; slot < 36; slot++) {
+            ItemStack stack = handler.getSlot(slot).getStack();
+
+            if (stack.isEmpty()) continue;
+            if (!ItemStack.areItemsAndComponentsEqual(stack, restockTarget)) continue;
+
+            RESTOCK_QUEUE.add(slot);
+        }
+
+//        for (int slot = 9; slot < 36; slot++) {
+//            ItemStack stack = handler.getSlot(slot).getStack();
+//
+//            if (stack.isEmpty()) continue;
+//            if (!ItemStack.areItemsAndComponentsEqual(stack, target)) continue;
+//
+//            if (target.getMaxCount() <= 1) {
+//                client.interactionManager.clickSlot(handler.syncId, slot, selectedSlot, SlotActionType.SWAP, client.player);
+//            } else {
+//                client.interactionManager.clickSlot(handler.syncId, slot, 0, SlotActionType.PICKUP, client.player);
+//                client.interactionManager.clickSlot(handler.syncId, selectedSlot, 0, SlotActionType.PICKUP, client.player);
+//                if (!handler.getCursorStack().isEmpty()) client.interactionManager.clickSlot(handler.syncId, slot, 0, SlotActionType.PICKUP, client.player);
+//            }
+//
+//            if (inv.getStack(selectedSlot).getCount() >= target.getMaxCount()) break;
+//        }
     }
 
     private static void pullItemToSlot(MinecraftClient client, int slot, SlotType type) {
