@@ -5,11 +5,16 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.paxquinn.hotbar_utils.HotbarMemory;
 import net.paxquinn.hotbar_utils.config.ConfigManager;
@@ -64,6 +69,9 @@ public class KeyInputHandler {
             }
             if (keyRestock.wasPressed()) {
                 restockViaClient(client);
+            }
+            if (keyElytra.wasPressed()) {
+                swapElytra(client, config.preferredChestplateName, config.preferredChestplateType, config.preferredElytraName);
             }
 
 
@@ -185,6 +193,61 @@ public class KeyInputHandler {
 //
 //            if (inv.getStack(selectedSlot).getCount() >= target.getMaxCount()) break;
 //        }
+    }
+
+    private static void swapElytra(MinecraftClient client, String preferredChestType, String preferredChestName, String preferredElytra) {
+        if (client.player == null || client.interactionManager == null) return;
+        ScreenHandler handler = client.player.currentScreenHandler;
+
+        PlayerInventory inv = client.player.getInventory();
+        int selectedHotbarSlot = inv.getSelectedSlot();
+
+        ItemStack equippedItem = client.player.getEquippedStack(EquipmentSlot.CHEST);
+        ItemStack preferredChestItem = createPreferredStack(preferredChestName, preferredChestType);
+        ItemStack preferredElytraItem = createPreferredStack("minecraft:elytra", preferredElytra);
+        ItemStack preferredItem = equippedItem.isOf(Items.ELYTRA) ? preferredChestItem : preferredElytraItem;
+
+        int searchFallbackSlot = -1;
+        for (int slot = 9; slot < 36; slot++) {
+            ItemStack stack = handler.getSlot(slot).getStack();
+
+            if (stack.isEmpty()) continue;
+            // Create fallback if available
+            if (stack.isOf(preferredItem.getItem()) || (equippedItem.isOf(Items.ELYTRA) && client.player.getPreferredEquipmentSlot(stack) == EquipmentSlot.CHEST)) searchFallbackSlot = slot;
+            // Equip random chestplate
+            if (equippedItem.isOf(Items.ELYTRA) && preferredItem.isEmpty() && client.player.getPreferredEquipmentSlot(stack) == EquipmentSlot.CHEST) {
+                executeSwap(client, slot, selectedHotbarSlot);
+                return;
+            }
+            // Equip specific item
+            if (ItemStack.areItemsAndComponentsEqual(stack, preferredItem)) {
+                executeSwap(client, slot, selectedHotbarSlot);
+                return;
+            }
+
+            if (slot < 35 || searchFallbackSlot == -1) continue;
+            executeSwap(client, searchFallbackSlot, selectedHotbarSlot);
+            return;
+        }
+    }
+    private static void executeSwap(MinecraftClient client, int slot, int selectedSlot) {
+        if (client.player == null || client.interactionManager == null) return;
+        client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId, slot, selectedSlot, SlotActionType.SWAP, client.player);
+        client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId, 6, selectedSlot, SlotActionType.SWAP, client.player);
+        client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId, slot, selectedSlot, SlotActionType.SWAP, client.player);
+    }
+    private static Item itemFromString(String id) {
+        Identifier identifier = Identifier.tryParse(id);
+        if (identifier == null) return null;
+        return Registries.ITEM.get(identifier);
+    }
+    private static ItemStack createPreferredStack(String id, String name) {
+        Item item = itemFromString(id);
+        if (item == null || item == Items.AIR) return ItemStack.EMPTY;
+        ItemStack stack = new ItemStack(item, 1);
+        if (name == null || name.isEmpty()) return stack;
+        stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal(name));
+        return stack;
     }
 
     private static void pullItemToSlot(MinecraftClient client, int slot, SlotType type) {

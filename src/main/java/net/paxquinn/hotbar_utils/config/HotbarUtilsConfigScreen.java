@@ -84,6 +84,11 @@ public class HotbarUtilsConfigScreen {
         // Quick Elytra Sub-Category
         SubCategoryBuilder elytra = entryBuilder.startSubCategory(Text.translatable("config.hotbar_utils.subcategory.quick_elytra"));
         elytra.add( entryBuilder.
+                startBooleanToggle(Text.translatable("config.hotbar_utils.elytra.fallback"), config.elytraFallback)
+                .setTooltip(Text.translatable("config.hotbar_utils.elytra.fallback.tooltip"))
+                .setSaveConsumer(value -> config.elytraFallback = value)
+                .build());
+        elytra.add( entryBuilder.
                 startTextField(Text.translatable("config.hotbar_utils.elytra.chestplate_type"), config.preferredChestplateType)
                 .setTooltip(Text.translatable("config.hotbar_utils.elytra.chestplate_type.tooltip"))
                 .setSaveConsumer(value -> config.preferredChestplateType = value)

@@ -40,6 +40,8 @@
   "config.hotbar_utils.hud_anchor_type.tooltip": "DYNAMIC: Empty Slots will not be shown. STATIC: All slots will be shown.",
 
   "config.hotbar_utils.subcategory.quick_elytra": "Quick Elytra",
+  "config.hotbar_utils.elytra.fallback": "Enable Fallback",
+  "config.hotbar_utils.elytra.fallback.tooltip": "Equip first item if preferred equipment is not found.",
   "config.hotbar_utils.elytra.elytra_name": "Preferred Elytra Name",
   "config.hotbar_utils.elytra.elytra_name.tooltip": "Optional. Chooses elytra with specified name, if available.",
   "config.hotbar_utils.elytra.chestplate_type": "Preferred Chestplate Type",

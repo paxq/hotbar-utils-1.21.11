@@ -17,6 +17,7 @@ public class HotbarUtilsConfig {
     public HudAnchor hudAnchor = HudAnchor.RIGHT;
     public HudAnchorType hudAnchorType = HudAnchorType.STATIC;
 
+    public boolean elytraFallback = true;
     public String preferredChestplateType = "";
     public String preferredChestplateName = "";
     public String preferredElytraName = "";
