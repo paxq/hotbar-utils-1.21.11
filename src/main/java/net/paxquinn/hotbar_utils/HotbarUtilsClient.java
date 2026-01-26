@@ -21,7 +21,7 @@ public class HotbarUtilsClient implements ClientModInitializer {
 
             if (client.player != null) {
                 PlayerInventory inv = client.player.getInventory();
-                for (int i = 0; i < 9; i++) {
+                for (int i = 0; i < 45; i++) {
                     ItemStack stack = inv.getStack(i);
                     HotbarMemory.remember(i, stack);
                 }

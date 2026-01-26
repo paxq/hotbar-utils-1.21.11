@@ -98,7 +98,7 @@ public class KeyInputHandler {
                     return;
                 }
 
-                if (restockTarget.getMaxCount() <= 1) {
+                if (restockTarget.getMaxCount() <= 1 || held.isEmpty()) {
                     client.interactionManager.clickSlot(handler.syncId, slot, restockHotbarSlot, SlotActionType.SWAP, client.player);
                 } else {
                     client.interactionManager.clickSlot(handler.syncId, slot, 0, SlotActionType.PICKUP, client.player);
