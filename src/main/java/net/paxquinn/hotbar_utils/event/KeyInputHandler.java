@@ -176,23 +176,6 @@ public class KeyInputHandler {
 
             RESTOCK_QUEUE.add(slot);
         }
-
-//        for (int slot = 9; slot < 36; slot++) {
-//            ItemStack stack = handler.getSlot(slot).getStack();
-//
-//            if (stack.isEmpty()) continue;
-//            if (!ItemStack.areItemsAndComponentsEqual(stack, target)) continue;
-//
-//            if (target.getMaxCount() <= 1) {
-//                client.interactionManager.clickSlot(handler.syncId, slot, selectedSlot, SlotActionType.SWAP, client.player);
-//            } else {
-//                client.interactionManager.clickSlot(handler.syncId, slot, 0, SlotActionType.PICKUP, client.player);
-//                client.interactionManager.clickSlot(handler.syncId, selectedSlot, 0, SlotActionType.PICKUP, client.player);
-//                if (!handler.getCursorStack().isEmpty()) client.interactionManager.clickSlot(handler.syncId, slot, 0, SlotActionType.PICKUP, client.player);
-//            }
-//
-//            if (inv.getStack(selectedSlot).getCount() >= target.getMaxCount()) break;
-//        }
     }
 
     private static void swapElytra(MinecraftClient client, String preferredChestType, String preferredChestName, String preferredElytra) {
